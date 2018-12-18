@@ -7,7 +7,7 @@
 构造函数、原型和实例之间的关系：每个构造函数都有一个原型对象，原型对象都包含一个指向构造函数的指针，而实例都包含一个原型对象的指针。
 
 继承的本质就是复制，即重写原型对象，代之以一个新类型的实例。
-
+(```)
 function SuperType() {
     this.property = true;
 }
@@ -19,8 +19,9 @@ SuperType.prototype.getSuperValue = function() {
 function SubType() {
     this.subproperty = false;
 }
-
+(```)
 // 这里是关键，创建SuperType的实例，并将该实例赋值给SubType.prototype
+(```)
 SubType.prototype = new SuperType(); 
 
 SubType.prototype.getSubValue = function() {
@@ -29,10 +30,11 @@ SubType.prototype.getSubValue = function() {
 
 var instance = new SubType();
 console.log(instance.getSuperValue()); // true
+(```)
 复制代码
 
 原型链方案存在的缺点：多个实例对引用类型的操作会被篡改。
-
+(```)
 function SuperType(){
   this.colors = ["red", "blue", "green"];
 }
@@ -46,10 +48,11 @@ alert(instance1.colors); //"red,blue,green,black"
 
 var instance2 = new SubType(); 
 alert(instance2.colors); //"red,blue,green,black"
+(```)
 复制代码
-2、借用构造函数继承
+### 2、借用构造函数继承
 使用父类的构造函数来增强子类实例，等同于复制父类的实例给子类（不使用原型）
-
+(```)
 function  SuperType(){
     this.color=["red","green","blue"];
 }
@@ -63,6 +66,7 @@ alert(instance1.color);//"red,green,blue,black"
 
 var instance2 = new SubType();
 alert(instance2.color);//"red,green,blue"
+(```)
 复制代码
 核心代码是SuperType.call(this)，创建子类实例时调用SuperType构造函数，于是SubType的每个实例都会将SuperType中的属性复制一份。
 
@@ -70,9 +74,9 @@ alert(instance2.color);//"red,green,blue"
 
 只能继承父类的实例属性和方法，不能继承原型属性/方法
 无法实现复用，每个子类都有父类实例函数的副本，影响性能
-3、组合继承
+### 3、组合继承
 组合上述两种方法就是组合继承。用原型链实现对原型属性和方法的继承，用借用构造函数技术来实现实例属性的继承。
-
+(```)
 function SuperType(name){
   this.name = name;
   this.colors = ["red", "blue", "green"];
@@ -108,6 +112,7 @@ var instance2 = new SubType("Greg", 27);
 alert(instance2.colors); //"red,blue,green"
 instance2.sayName(); //"Greg";
 instance2.sayAge(); //27
+(```)
 复制代码
 
 缺点：
@@ -116,17 +121,18 @@ instance2.sayAge(); //27
 第二次调用SuperType()：给instance1写入两个属性name，color。
 实例对象instance1上的两个属性就屏蔽了其原型对象SubType.prototype的两个同名属性。所以，组合模式的缺点就是在使用子类创建实例对象时，其原型中会存在两份相同的属性/方法。
 
-4、原型式继承
+### 4、原型式继承
 利用一个空对象作为中介，将某个对象直接赋值给空对象构造函数的原型。
-
+(```)
 function object(obj){
   function F(){}
   F.prototype = obj;
   return new F();
 }
+(```)
 复制代码
 object()对传入其中的对象执行了一次浅复制，将构造函数F的原型直接指向传入的对象。
-
+(```)
 var person = {
   name: "Nicholas",
   friends: ["Shelby", "Court", "Van"]
@@ -141,6 +147,7 @@ yetAnotherPerson.name = "Linda";
 yetAnotherPerson.friends.push("Barbie");
 
 alert(person.friends);   //"Shelby,Court,Van,Rob,Barbie"
+(```)
 复制代码
 缺点：
 
@@ -148,7 +155,7 @@ alert(person.friends);   //"Shelby,Court,Van,Rob,Barbie"
 无法传递参数
 另外，ES5中存在Object.create()的方法，能够代替上面的object方法。
 
-5、寄生式继承
+### 5、寄生式继承
 核心：在原型式继承的基础上，增强对象，返回构造函数
 
 function createAnother(original){
@@ -160,21 +167,22 @@ function createAnother(original){
 }
 复制代码
 函数的主要作用是为构造函数新增属性和方法，以增强函数
-
+(```)
 var person = {
   name: "Nicholas",
   friends: ["Shelby", "Court", "Van"]
 };
 var anotherPerson = createAnother(person);
 anotherPerson.sayHi(); //"hi"
+(```)
 复制代码
 缺点（同原型式继承）：
 
 原型链继承多个实例的引用类型属性指向相同，存在篡改的可能。
 无法传递参数
-6、寄生组合式继承
+### 6、寄生组合式继承
 结合借用构造函数传递参数和寄生模式实现继承
-
+(```)
 function inheritPrototype(subType, superType){
   var prototype = Object.create(superType.prototype); // 创建对象，创建父类原型的一个副本
   prototype.constructor = subType;                    // 增强对象，弥补因重写原型而失去的默认的constructor 属性
@@ -209,13 +217,14 @@ var instance2 = new SubType("lxy", 23);
 
 instance1.colors.push("2"); // ["red", "blue", "green", "2"]
 instance1.colors.push("3"); // ["red", "blue", "green", "3"]
+(```)
 复制代码
 
 这个例子的高效率体现在它只调用了一次SuperType 构造函数，并且因此避免了在SubType.prototype 上创建不必要的、多余的属性。于此同时，原型链还能保持不变；因此，还能够正常使用instanceof 和isPrototypeOf()
 
 这是最成熟的方法，也是现在库实现的方法
 
-7、混入方式继承多个对象
+### 7、混入方式继承多个对象
 function MyClass() {
      SuperClass.call(this);
      OtherSuperClass.call(this);
@@ -234,9 +243,9 @@ MyClass.prototype.myMethod = function() {
 复制代码
 Object.assign会把 OtherSuperClass原型上的函数拷贝到 MyClass原型上，使 MyClass 的所有实例都可用 OtherSuperClass 的方法。
 
-8、ES6类继承extends
+### 8、ES6类继承extends
 extends关键字主要用于类声明或者类表达式中，以创建一个类，该类是另一个类的子类。其中constructor表示构造函数，一个类中只能有一个构造函数，有多个会报出SyntaxError错误,如果没有显式指定构造方法，则会添加默认的 constructor方法，使用例子如下。
-
+(```)
 class Rectangle {
     // constructor
     constructor(height, width) {
@@ -301,8 +310,9 @@ function _inherits(subType, superType) {
             : subType.__proto__ = superType;
     }
 }
+(```)
 复制代码
-总结
+## 总结
 1、函数声明和类声明的区别
 
 函数声明会提升，类声明不会。首先需要声明你的类，然后访问它，否则像下面的代码会抛出一个ReferenceError。
@@ -318,4 +328,4 @@ ES5的继承实质上是先创建子类的实例对象，然后再将父类的�
 
 ES6的继承有所不同，实质上是先创建父类的实例对象this，然后再用子类的构造函数修改this。因为子类没有自己的this对象，所以必须先调用父类的super()方法，否则新建实例报错。
 
-《javascript高级程序设计》笔记：继承
+《javascript高级程序设计》
