@@ -7,7 +7,7 @@
 构造函数、原型和实例之间的关系：每个构造函数都有一个原型对象，原型对象都包含一个指向构造函数的指针，而实例都包含一个原型对象的指针。
 
 继承的本质就是复制，即重写原型对象，代之以一个新类型的实例。
-(```)
+`
 function SuperType() {
     this.property = true;
 }
@@ -30,11 +30,11 @@ SubType.prototype.getSubValue = function() {
 
 var instance = new SubType();
 console.log(instance.getSuperValue()); // true
-(```)
+`
 复制代码
 
 原型链方案存在的缺点：多个实例对引用类型的操作会被篡改。
-(```)
+`
 function SuperType(){
   this.colors = ["red", "blue", "green"];
 }
@@ -48,11 +48,11 @@ alert(instance1.colors); //"red,blue,green,black"
 
 var instance2 = new SubType(); 
 alert(instance2.colors); //"red,blue,green,black"
-(```)
+`
 复制代码
 ### 2、借用构造函数继承
 使用父类的构造函数来增强子类实例，等同于复制父类的实例给子类（不使用原型）
-(```)
+`
 function  SuperType(){
     this.color=["red","green","blue"];
 }
@@ -66,7 +66,7 @@ alert(instance1.color);//"red,green,blue,black"
 
 var instance2 = new SubType();
 alert(instance2.color);//"red,green,blue"
-(```)
+`
 复制代码
 核心代码是SuperType.call(this)，创建子类实例时调用SuperType构造函数，于是SubType的每个实例都会将SuperType中的属性复制一份。
 
@@ -123,16 +123,16 @@ instance2.sayAge(); //27
 
 ### 4、原型式继承
 利用一个空对象作为中介，将某个对象直接赋值给空对象构造函数的原型。
-(```)
+`
 function object(obj){
   function F(){}
   F.prototype = obj;
   return new F();
 }
-(```)
+`
 复制代码
 object()对传入其中的对象执行了一次浅复制，将构造函数F的原型直接指向传入的对象。
-(```)
+`
 var person = {
   name: "Nicholas",
   friends: ["Shelby", "Court", "Van"]
@@ -147,7 +147,7 @@ yetAnotherPerson.name = "Linda";
 yetAnotherPerson.friends.push("Barbie");
 
 alert(person.friends);   //"Shelby,Court,Van,Rob,Barbie"
-(```)
+`
 复制代码
 缺点：
 
@@ -157,7 +157,7 @@ alert(person.friends);   //"Shelby,Court,Van,Rob,Barbie"
 
 ### 5、寄生式继承
 核心：在原型式继承的基础上，增强对象，返回构造函数
-
+`
 function createAnother(original){
   var clone = object(original); // 通过调用 object() 函数创建一个新对象
   clone.sayHi = function(){  // 以某种方式来增强对象
@@ -165,16 +165,17 @@ function createAnother(original){
   };
   return clone; // 返回这个对象
 }
+`
 复制代码
 函数的主要作用是为构造函数新增属性和方法，以增强函数
-(```)
+`
 var person = {
   name: "Nicholas",
   friends: ["Shelby", "Court", "Van"]
 };
 var anotherPerson = createAnother(person);
 anotherPerson.sayHi(); //"hi"
-(```)
+`
 复制代码
 缺点（同原型式继承）：
 
@@ -217,7 +218,7 @@ var instance2 = new SubType("lxy", 23);
 
 instance1.colors.push("2"); // ["red", "blue", "green", "2"]
 instance1.colors.push("3"); // ["red", "blue", "green", "3"]
-(```)
+ (```)
 复制代码
 
 这个例子的高效率体现在它只调用了一次SuperType 构造函数，并且因此避免了在SubType.prototype 上创建不必要的、多余的属性。于此同时，原型链还能保持不变；因此，还能够正常使用instanceof 和isPrototypeOf()
@@ -267,8 +268,6 @@ class Rectangle {
 const rectangle = new Rectangle(10, 20);
 console.log(rectangle.area);
 // 输出 200
-
------------------------------------------------------------------
 // 继承
 class Square extends Rectangle {
 
@@ -287,8 +286,8 @@ class Square extends Rectangle {
 const square = new Square(10);
 console.log(square.area);
 // 输出 100
-复制代码
-extends继承的核心代码如下，其实现和上述的寄生组合式继承方式一样
+// 复制代码
+//extends继承的核心代码如下，其实现和上述的寄生组合式继承方式一样
 
 function _inherits(subType, superType) {
   
