@@ -19,9 +19,9 @@ SuperType.prototype.getSuperValue = function() {
 function SubType() {
     this.subproperty = false;
 }
-(```)
+
 // 这里是关键，创建SuperType的实例，并将该实例赋值给SubType.prototype
-(```)
+
 SubType.prototype = new SuperType(); 
 
 SubType.prototype.getSubValue = function() {
